@@ -51,6 +51,28 @@ namespace Tenjin.Sys.Apis
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<ILogService, LogService>();
 
+            // materials
+            services.AddScoped<IMaterialGroupService, MaterialGroupService>();
+            services.AddScoped<IMaterialSubgroupService, MaterialSubgroupService>();
+            services.AddScoped<IMaterialService, MaterialService>();
+            services.AddScoped<IMaterialBarcodeService, MaterialBarcodeService>();
+            services.AddScoped<IMaterialReceivingVoucherService, MaterialReceivingVoucherService>();
+            services.AddScoped<IMaterialDeliveryVoucherService, MaterialDeliveryVoucherService>();
+            services.AddScoped<IUnitService, UnitService>();
+
+            // products
+            services.AddScoped<IProductGroupService, ProductGroupService>();
+            services.AddScoped<IProductSubgroupService, ProductSubgroupService>();
+            services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ISupplierService, SupplierService>();
+
+            services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IJobTitleService, JobTitleService>();
+            services.AddScoped<IJobPositionService, JobPositionService>();
+
             TenjinStartupHelper.ConfigureServices(services);
         }
 
