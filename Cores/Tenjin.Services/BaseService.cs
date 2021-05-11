@@ -8,8 +8,7 @@ using Tenjin.Contracts.Interfaces;
 using Tenjin.Helpers;
 using Tenjin.Models.Cores;
 using Tenjin.Models.Entities;
-using Tenjin.Models.Interfaces;
-using Tenjin.Serializations;
+using Tenjin.Reflections;
 using Tenjin.Services.Interfaces;
 
 namespace Tenjin.Services
@@ -22,39 +21,35 @@ namespace Tenjin.Services
         }
 
         protected Expression<Func<T, bool>> GetFilterExpression<T>(string code)
-            where T : IEntity
+            where T : BaseEntity
         {
             Expression<Func<T, bool>> filter = x => x.Id.Equals(code);
             return filter;
         }
 
         protected void PrepareInsertModel<T>(T entity)
-            where T : IEntity
+            where T : BaseEntity
         {
             entity.CreatedDate = DateTime.Now;
             entity.LastModified = DateTime.Now;
         }
 
         protected void PrepareReplaceModel<T>(T entity)
-            where T : IEntity
+            where T : BaseEntity
         {
             entity.LastModified = DateTime.Now;
         }
     }
 
-    public abstract class BaseService<T> : BaseService, IBaseService<T>
-        where T : IEntity
+    public class BaseService<T> : BaseService, IBaseService<T>
+        where T : BaseEntity
     {
-        private readonly IContext _context;
         private readonly IRepository<T> _repository;
 
-        protected BaseService(IContext context, IRepository<T> repository)
+        protected BaseService(IRepository<T> repository)
         {
-            _context = context;
             _repository = repository;
         }
-
-        protected abstract string Tag();
 
         protected IRepository<T> GetRepository()
         {
@@ -87,12 +82,17 @@ namespace Tenjin.Services
 
         public virtual async Task<long> Count(Expression<Func<T, bool>> filter)
         {
-            return await _repository.Count(filter);
+            return await Count(new ExpressionContext<T>(filter));
         }
 
         public virtual async Task<long> Count(FilterDefinition<T> filter)
         {
-            return await _repository.Count(filter);
+            return await Count(new ExpressionContext<T>(filter));
+        }
+
+        public async Task<long> Count(IExpressionContext<T> context)
+        {
+            return await _repository.Count(context.GetPreExpression());
         }
 
         public virtual async Task Delete(string code)
@@ -113,40 +113,51 @@ namespace Tenjin.Services
 
         public virtual async Task<IEnumerable<T>> GetByExpression(Expression<Func<T, bool>> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            return await _repository.GetByExpression(filter, sort, projection);
+            return await GetByExpression(new ExpressionContext<T>(filter, sort), projection);
         }
 
         public virtual async Task<IEnumerable<T>> GetByExpression(FilterDefinition<T> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            return await _repository.GetByExpression(filter, sort, projection);
+            return await GetByExpression(new ExpressionContext<T>(filter, sort), projection);
+        }
+
+        public async Task<IEnumerable<T>> GetByExpression(IExpressionContext<T> context, ProjectionDefinition<T> projection = null)
+        {
+            return await _repository.GetByExpression(context.GetPreExpression(), context.GetSort(), projection);
         }
 
         public virtual async Task<FetchResult<T>> GetPageByExpression(Expression<Func<T, bool>> filter, int page, int quantity = 10, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            return new FetchResult<T>
-            {
-                Count = await _repository.Count(filter),
-                Models = await _repository.GetPageByExpression(page, quantity > 0 ? quantity : 10, filter, sort, projection)
-            };
+            return await GetPageByExpression(new ExpressionContext<T>(filter, sort), page, quantity, projection);
         }
 
         public virtual async Task<FetchResult<T>> GetPageByExpression(FilterDefinition<T> filter, int page, int quantity = 10, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
+            return await GetPageByExpression(new ExpressionContext<T>(filter, sort), page, quantity, projection);
+        }
+
+        public async Task<FetchResult<T>> GetPageByExpression(IExpressionContext<T> context, int page, int quantity = 10, ProjectionDefinition<T> projection = null)
+        {
             return new FetchResult<T>
             {
-                Count = await _repository.Count(filter),
-                Models = await _repository.GetPageByExpression(page, quantity > 0 ? quantity : 10, filter, sort, projection)
+                Count = await _repository.Count(context.GetPreExpression()),
+                Models = await _repository.GetPageByExpression(page, quantity > 0 ? quantity : 10, context.GetPreExpression(), context.GetSort(), projection)
             };
         }
 
         public virtual async Task<T> GetSingleByExpression(Expression<Func<T, bool>> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null, int index = 1)
         {
-            return await _repository.GetSingleByExpression(filter, sort, projection, index);
+            return await GetSingleByExpression(new ExpressionContext<T>(filter, sort), projection, index);
         }
 
         public virtual async Task<T> GetSingleByExpression(FilterDefinition<T> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null, int index = 1)
         {
-            return await _repository.GetSingleByExpression(filter, sort, projection, index);
+            return await GetSingleByExpression(new ExpressionContext<T>(filter, sort), projection, index);
+        }
+
+        public async Task<T> GetSingleByExpression(IExpressionContext<T> context, ProjectionDefinition<T> projection = null, int index = 1)
+        {
+            return await _repository.GetSingleByExpression(context.GetPreExpression(), context.GetSort(), projection, index);
         }
 
         public virtual async Task Replace(T entity)
@@ -171,15 +182,15 @@ namespace Tenjin.Services
         {
             var manager = GetRepository().GetCollection().Indexes;
             {
-                if (TenjinMongoUtils.GenerateIndexes<T>(out var definitions))
+                if (TenjinRefUtils.GenerateIndexes<T>(out var definitions))
                 {
-                    await manager.CreateOneAsync(CreateIndexModel($"{typeof(T).Name.ToRegular()}_auto", definitions));
+                    await manager.CreateOneAsync(CreateIndexModel("_auto", definitions));
                 }
             }
             {
-                if (TenjinMongoUtils.GenerateTextIndexes<T>(out var definitions))
+                if (TenjinRefUtils.GenerateTextIndexes<T>(out var definitions))
                 {
-                    await manager.CreateOneAsync(CreateIndexModel($"{typeof(T).Name.ToRegular()}_text", definitions));
+                    await manager.CreateOneAsync(CreateIndexModel("_text", definitions));
                 }
             }
             static CreateIndexModel<T> CreateIndexModel(string name, IndexKeysDefinition<T> definition)
@@ -191,7 +202,7 @@ namespace Tenjin.Services
 
         protected virtual async Task InitializeInsertModel(T entity)
         {
-            entity.Code = !string.IsNullOrEmpty(entity.Code) ? entity.Code : await GenerateCode();
+            await Task.Yield();
         }
 
         protected virtual async Task InitializeReplaceModel(T entity)
@@ -199,51 +210,18 @@ namespace Tenjin.Services
             await Task.Yield();
         }
 
-        protected virtual string PrefixCode()
-        {
-            return DateTime.Now.ToString("yyyyMM");
-        }
-
-        protected virtual string Coding(string prefix, CodeGenerate model)
-        {
-            return $"{prefix}{model.Count:D5}{TenjinUtils.RandomString(5).ToUpper()}";
-        }
-
-        public virtual async Task<string> GenerateCode()
-        {
-            var prefix = PrefixCode();
-            var code = $"{Tag()}-{prefix}";
-            var filter = Builders<CodeGenerate>.Filter.Where(x => x.Code == code);
-            var updater = Builders<CodeGenerate>.Update
-                .SetOnInsert(x => x.Code, code)
-                .SetOnInsert(x => x.CreatedDate, DateTime.Now)
-                .Set(x => x.LastModified, DateTime.Now)
-                .Set(x => x.IsPublished, true)
-                .Inc(x => x.Count, 1);
-            var options = new FindOneAndUpdateOptions<CodeGenerate, CodeGenerate>
-            {
-                IsUpsert = true,
-                ReturnDocument = ReturnDocument.After
-            };
-            var model = await _context.CodeGenerateRepository.GetCollection().FindOneAndUpdateAsync(filter, updater, options);
-            return Coding(prefix, model);
-        }
     }
 
-    public abstract class BaseService<T, TV> : BaseService, IBaseService<T, TV>
+    public class BaseService<T, TV> : BaseService, IBaseService<T, TV>
         where T : BaseEntity
         where TV : T
     {
-        private readonly IContext _context;
-        private readonly IRepository<T> _repository;
+        protected readonly IRepository<T> _repository;
 
-        protected BaseService(IContext context, IRepository<T> repository)
+        protected BaseService(IRepository<T> repository)
         {
-            _context = context;
             _repository = repository;
         }
-
-        protected abstract string Tag();
 
         protected IRepository<T> GetRepository()
         {
@@ -276,14 +254,17 @@ namespace Tenjin.Services
 
         public virtual async Task<long> Count(Expression<Func<T, bool>> filter)
         {
-            var aggregate = CreateViewAggregate(filter);
-            var counter = await aggregate.Count().FirstOrDefaultAsync();
-            return counter?.Count ?? 0;
+            return await Count(new ExpressionContext<T, TV>(filter));
         }
 
         public virtual async Task<long> Count(FilterDefinition<T> filter)
         {
-            var aggregate = CreateViewAggregate(filter);
+            return await Count(new ExpressionContext<T, TV>(filter));
+        }
+
+        public virtual async Task<long> Count(IExpressionContext<T, TV> context)
+        {
+            var aggregate = CreateViewAggregate(context);
             var counter = await aggregate.Count().FirstOrDefaultAsync();
             return counter?.Count ?? 0;
         }
@@ -301,50 +282,57 @@ namespace Tenjin.Services
         public virtual async Task<TV> GetByCode(string code)
         {
             if (TenjinUtils.IsStringEmpty(code)) return default;
-            var aggregate = CreateViewAggregate(GetFilterExpression<T>(code));
+            var aggregate = CreateViewAggregate(new ExpressionContext<T, TV>(GetFilterExpression<T>(code)));
             return await aggregate.FirstOrDefaultAsync();
         }
 
         public virtual async Task<TV> GetSingleByExpression(Expression<Func<T, bool>> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null, int index = 1)
         {
-            var aggregate = CreateViewAggregate(filter, sort, projection).Skip(index - 1);
-            return await aggregate.FirstOrDefaultAsync();
+            return await GetSingleByExpression(new ExpressionContext<T, TV>(filter, sort), projection, index);
         }
 
         public virtual async Task<TV> GetSingleByExpression(FilterDefinition<T> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null, int index = 1)
         {
-            var aggregate = CreateViewAggregate(filter, sort, projection).Skip(index - 1);
+            return await GetSingleByExpression(new ExpressionContext<T, TV>(filter, sort), projection, index);
+        }
+
+        public async Task<TV> GetSingleByExpression(IExpressionContext<T, TV> context, ProjectionDefinition<T> projection = null, int index = 1)
+        {
+            var aggregate = CreateViewAggregate(context, projection);
             return await aggregate.FirstOrDefaultAsync();
         }
 
         public virtual async Task<IEnumerable<TV>> GetByExpression(Expression<Func<T, bool>> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            var aggregate = CreateViewAggregate(filter, sort, projection);
-            return await aggregate.ToListAsync();
+            return await GetByExpression(new ExpressionContext<T, TV>(filter, sort), projection);
         }
 
         public virtual async Task<IEnumerable<TV>> GetByExpression(FilterDefinition<T> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            var aggregate = CreateViewAggregate(filter, sort, projection);
+            return await GetByExpression(new ExpressionContext<T, TV>(filter, sort), projection);
+        }
+
+        public async Task<IEnumerable<TV>> GetByExpression(IExpressionContext<T, TV> context, ProjectionDefinition<T> projection = null)
+        {
+            var aggregate = CreateViewAggregate(context, projection);
             return await aggregate.ToListAsync();
         }
 
         public virtual async Task<FetchResult<TV>> GetPageByExpression(Expression<Func<T, bool>> filter, int page, int quantity = 10, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            var aggregate = CreateViewAggregate(filter, sort, projection);
-            var counter = await aggregate.Count().FirstOrDefaultAsync();
-            return new FetchResult<TV>
-            {
-                Count = counter?.Count ?? 0,
-                Models = await aggregate.Skip((Math.Max(0, page - 1) * quantity)).Limit(quantity > 0 ? quantity : 10).ToListAsync()
-            };
+            return await GetPageByExpression(new ExpressionContext<T, TV>(filter, sort), page, quantity, projection);
         }
 
         public virtual async Task<FetchResult<TV>> GetPageByExpression(FilterDefinition<T> filter, int page, int quantity = 10, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
         {
-            var aggregate = CreateViewAggregate(filter, sort, projection);
+            return await GetPageByExpression(new ExpressionContext<T, TV>(filter, sort), page, quantity, projection);
+        }
+
+        public async Task<FetchResult<TV>> GetPageByExpression(IExpressionContext<T, TV> context, int page, int quantity = 10, ProjectionDefinition<T> projection = null)
+        {
+            var aggregate = CreateViewAggregate(context, projection);
             var counter = await aggregate.Count().FirstOrDefaultAsync();
-            return new FetchResult<TV>
+            return  new FetchResult<TV>
             {
                 Count = counter?.Count ?? 0,
                 Models = await aggregate.Skip((Math.Max(0, page - 1) * quantity)).Limit(quantity > 0 ? quantity : 10).ToListAsync()
@@ -373,15 +361,15 @@ namespace Tenjin.Services
         {
             var manager = GetRepository().GetCollection().Indexes;
             {
-                if (TenjinMongoUtils.GenerateIndexes<T>(out var definitions))
+                if (TenjinRefUtils.GenerateIndexes<T>(out var definitions))
                 {
-                    await manager.CreateOneAsync(CreateIndexModel($"{typeof(T).Name.ToRegular()}_auto", definitions));
+                    await manager.CreateOneAsync(CreateIndexModel("_auto", definitions));
                 }
             }
             {
-                if (TenjinMongoUtils.GenerateTextIndexes<T>(out var definitions))
+                if (TenjinRefUtils.GenerateTextIndexes<T>(out var definitions))
                 {
-                    await manager.CreateOneAsync(CreateIndexModel($"{typeof(T).Name.ToRegular()}_text", definitions));
+                    await manager.CreateOneAsync(CreateIndexModel("_text", definitions));
                 }
             }
             static CreateIndexModel<T> CreateIndexModel(string name, IndexKeysDefinition<T> definition)
@@ -393,7 +381,7 @@ namespace Tenjin.Services
 
         protected virtual async Task InitializeInsertModel(T entity)
         {
-            entity.Code = !string.IsNullOrEmpty(entity.Code) ? entity.Code : await GenerateCode();
+            await Task.Yield();
         }
 
         protected virtual async Task InitializeReplaceModel(T entity)
@@ -401,57 +389,27 @@ namespace Tenjin.Services
             await Task.Yield();
         }
 
-        protected IAggregateFluent<TV> CreateViewAggregate(FilterDefinition<T> filter = null, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null)
+        protected IAggregateFluent<TV> CreateViewAggregate(IExpressionContext<T, TV> context, ProjectionDefinition<T> projection = null)
         {
             var aggregate = GetAggregate();
-            if (filter != null)
+            if (context.GetPreExpression() != null)
             {
-                aggregate = aggregate.Match(filter);
+                aggregate = aggregate.Match(context.GetPreExpression());
             }
-            if (sort != null)
+            if (context.GetSort() != null)
             {
-                aggregate = aggregate.Sort(sort);
+                aggregate = aggregate.Sort(context.GetSort());
             }
             if (projection != null)
             {
                 aggregate = aggregate.Project(projection).As<T>();
             }
-            return ConvertToViewAggreagate(aggregate);
+            return ConvertToViewAggreagate(aggregate, context);
         }
 
-        protected virtual IAggregateFluent<TV> ConvertToViewAggreagate(IAggregateFluent<T> mappings)
+        protected virtual IAggregateFluent<TV> ConvertToViewAggreagate(IAggregateFluent<T> mappings, IExpressionContext<T, TV> context)
         {
-            return mappings.As<TV>();
-        }
-
-        protected virtual string PrefixCode()
-        {
-            return DateTime.Now.ToString("yyyyMM");
-        }
-
-        protected virtual string Coding(string prefix, CodeGenerate model)
-        {
-            return $"{prefix}{model.Count:D5}{TenjinUtils.RandomString(5).ToUpper()}";
-        }
-
-        public virtual async Task<string> GenerateCode()
-        {
-            var prefix = PrefixCode();
-            var code = string.IsNullOrEmpty(prefix) ? $"{Tag()}" : $"{Tag()}-{prefix}";
-            var filter = Builders<CodeGenerate>.Filter.Where(x => x.Code == code);
-            var updater = Builders<CodeGenerate>.Update
-                .SetOnInsert(x => x.Code, code)
-                .SetOnInsert(x => x.CreatedDate, DateTime.Now)
-                .Set(x => x.LastModified, DateTime.Now)
-                .Set(x => x.IsPublished, true)
-                .Inc(x => x.Count, 1);
-            var options = new FindOneAndUpdateOptions<CodeGenerate, CodeGenerate>
-            {
-                IsUpsert = true,
-                ReturnDocument = ReturnDocument.After
-            };
-            var model = await _context.CodeGenerateRepository.GetCollection().FindOneAndUpdateAsync(filter, updater, options);
-            return Coding(prefix, model);
+            return mappings.As<TV>().Match(context.GetPostExpression());
         }
     }
 }

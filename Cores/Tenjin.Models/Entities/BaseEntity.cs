@@ -14,7 +14,10 @@ namespace Tenjin.Models.Entities
         public string Id { get; set; }
 
         [BsonProperty(BsonDirection.DESC)]
-        public virtual string Code { get; set; }
+        public string Code { get; set; }
+
+        [BsonProperty(BsonDirection.DESC)]
+        public virtual string DefCode { get; set; }
 
         [BsonProperty(BsonDirection.DESC)]
         public virtual string Name { get; set; }
@@ -32,6 +35,6 @@ namespace Tenjin.Models.Entities
 
         [BsonElement]
         [BsonProperty(BsonDirection.DESC)]
-        public virtual string ValueToSearch => $"{Code?.ToSeoUrl()} {Name?.ToSeoUrl()}";
+        public virtual string ValueToSearch => $"{DefCode?.ToSeoUrl()} {Name?.ToSeoUrl()}";
     }
 }

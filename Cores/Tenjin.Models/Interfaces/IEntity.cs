@@ -4,8 +4,9 @@ namespace Tenjin.Models.Interfaces
 {
     public interface IEntity
     {
-        string Id { get; set; }
+        string DefCode { get; set; }
         string Code { get; set; }
+        string Id { get; set; }
         string Name { get; set; }
         string Description { get; set; }
         DateTime CreatedDate { get; set; }

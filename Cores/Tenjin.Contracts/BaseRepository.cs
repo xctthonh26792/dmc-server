@@ -16,13 +16,7 @@ namespace Tenjin.Contracts
         public BaseRepository(IMongoDatabase database)
         {
             _database = database;
-            _collection = database.GetCollection<T>(TenjinExtensions.ToRegular<T>());
-        }
-
-        public BaseRepository(IMongoDatabase database, string name)
-        {
-            _database = database;
-            _collection = database.GetCollection<T>(name);
+            _collection = _database.GetCollection<T>();
         }
 
         public async Task Add(T entity)
@@ -57,13 +51,6 @@ namespace Tenjin.Contracts
         {
             return await _collection.CountDocumentsAsync(CombineExpression(filter));
         }
-
-        public async Task<IEnumerable<TF>> Distinct<TF>(FieldDefinition<T, TF> field, FilterDefinition<T> filter)
-        {
-            var cursor = await _collection.DistinctAsync<TF>(field, filter);
-            return await cursor.ToListAsync();
-        }
-
 
         public async Task Delete(T entity)
         {
@@ -126,6 +113,12 @@ namespace Tenjin.Contracts
         public IMongoCollection<T> GetCollection()
         {
             return _collection;
+        }
+
+        public IMongoCollection<TC> GetMongoCollection<TC>(string name = "")
+        {
+            var collection = string.IsNullOrEmpty(name) ? typeof(TC).Name : name;
+            return _database.GetCollection<TC>(collection);
         }
 
         public async Task<T> GetSingleByExpression(Expression<Func<T, bool>> filter, SortDefinition<T> sort = null, ProjectionDefinition<T> projection = null, int index = 1)

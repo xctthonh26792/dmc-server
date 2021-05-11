@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Tenjin.Apis.Reflections;
 using Tenjin.Models.Entities;
 using Tenjin.Services.Interfaces;
 
@@ -11,7 +12,9 @@ namespace Tenjin.Apis.Controllers
 {
     public abstract class BaseController : TenjinController
     {
-        
+        protected virtual SortDefinition<T> GetDefaultSort<T>(IQueryCollection queries) where T : BaseEntity => Builders<T>.Sort.Descending(x => x.CreatedDate);
+
+        protected virtual Expression<Func<T, bool>> GetDefaultExpression<T>(IQueryCollection queries) => x => true;
     }
 
     public abstract class BaseController<T> : BaseController
@@ -24,23 +27,18 @@ namespace Tenjin.Apis.Controllers
             _service = service;
         }
 
-        protected virtual SortDefinition<T> GetDefaultSort() => Builders<T>.Sort.Descending(x => x.CreatedDate);
-
-        protected virtual Expression<Func<T, bool>> GetDefaultExpression(Expression<Func<T, bool>> filter = null) => filter ?? (x => true);
-
         [HttpGet("{page:int}/{quantity:int}")]
         [HttpPost("{page:int}/{quantity:int}")]
         public virtual async Task<IActionResult> GetPageByExpression(int page, int quantity)
         {
-            var filter = GetDefaultExpression();
-            var sort = GetDefaultSort();
-            return Ok(await _service.GetPageByExpression(filter, page, quantity, sort));
+            var context = await HttpContextReader.Create(HttpContext);
+            return Ok(await _service.GetPageByExpression(context.As<T>(), page, quantity));
         }
 
         [HttpGet("selectize")]
         public virtual async Task<IActionResult> Selectize()
         {
-            return Ok(await _service.GetByExpression(GetDefaultExpression(x => x.IsPublished)));
+            return Ok(await _service.GetByExpression(x => x.IsPublished));
         }
 
         [HttpGet("{code}")]
@@ -53,8 +51,8 @@ namespace Tenjin.Apis.Controllers
         [HttpPost("count")]
         public virtual async Task<IActionResult> Count()
         {
-            var filter = GetDefaultExpression();
-            return Ok(await _service.Count(filter));
+            var context = await HttpContextReader.Create(HttpContext);
+            return Ok(await _service.Count(context.As<T>()));
         }
 
         [HttpPost]
@@ -116,23 +114,18 @@ namespace Tenjin.Apis.Controllers
             _service = service;
         }
 
-        protected virtual SortDefinition<T> GetDefaultSort() => Builders<T>.Sort.Descending(x => x.CreatedDate);
-
-        protected virtual Expression<Func<T, bool>> GetDefaultExpression(Expression<Func<T, bool>> filter = null) => filter ?? (x => true);
-
         [HttpGet("{page:int}/{quantity:int}")]
         [HttpPost("{page:int}/{quantity:int}")]
         public virtual async Task<IActionResult> GetPageByExpression(int page, int quantity)
         {
-            var filter = GetDefaultExpression();
-            var sort = GetDefaultSort();
-            return Ok(await _service.GetPageByExpression(filter, page, quantity, sort));
+            var context = await HttpContextReader.Create(HttpContext);
+            return Ok(await _service.GetPageByExpression(context.As<T, TV>(), page, quantity));
         }
 
         [HttpGet("selectize")]
         public virtual async Task<IActionResult> Selectize()
         {
-            return Ok(await _service.GetByExpression(GetDefaultExpression(x => x.IsPublished)));
+            return Ok(await _service.GetByExpression(x => x.IsPublished));
         }
 
         [HttpGet("{code}")]
@@ -145,8 +138,8 @@ namespace Tenjin.Apis.Controllers
         [HttpPost("count")]
         public virtual async Task<IActionResult> Count()
         {
-            var filter = GetDefaultExpression();
-            return Ok(await _service.Count(filter));
+            var context = await HttpContextReader.Create(HttpContext);
+            return Ok(await _service.Count(context.As<T, TV>()));
         }
 
         [HttpPost]

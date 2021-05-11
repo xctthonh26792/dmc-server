@@ -11,6 +11,8 @@ namespace Tenjin.Contracts.Interfaces
     {
         IMongoCollection<T> GetCollection();
 
+        IMongoCollection<TC> GetMongoCollection<TC>(string name = "");
+
         IAggregateFluent<T> GetAggregate();
 
         Task<IEnumerable<T>> GetPageByExpression(int page, int quantity,
@@ -72,7 +74,5 @@ namespace Tenjin.Contracts.Interfaces
         Task DeleteMany(Expression<Func<T, bool>> filter);
 
         Task DeleteMany(FilterDefinition<T> filter);
-
-        Task<IEnumerable<TF>> Distinct<TF>(FieldDefinition<T, TF> field, FilterDefinition<T> filter);
     }
 }

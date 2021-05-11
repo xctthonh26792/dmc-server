@@ -11,16 +11,6 @@ namespace Tenjin.Helpers
 {
     public static partial class TenjinExtensions
     {
-        public static string ToRegular<T>()
-        {
-            return ToRegular(typeof(T).Name);
-        }
-
-        public static string ToRegular(this string value)
-        {
-            return Regex.Replace(value.Replace("`", ""), "([A-Z]{1,2}|[0-9]|`+)", "_$1").Trim('_').ToLower();
-        }
-
         public static string Shorten(this string text, int shortenLength, bool isCheckLastDot = false,
             bool isRemoveHtml = true)
         {

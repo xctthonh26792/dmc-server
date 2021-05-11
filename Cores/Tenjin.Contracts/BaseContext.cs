@@ -25,16 +25,9 @@ namespace Tenjin.Contracts
             return client.GetDatabase(await builder.GetDatabaseName());
         }
 
-        public IRepository<CodeGenerate> CodeGenerateRepository => ResolveRepository<CodeGenerate>();
-
         public virtual IRepository<T> ResolveRepository<T>() where T : BaseEntity
         {
             return new BaseRepository<T>(_database);
-        }
-
-        public virtual IRepository<T> ResolveRepository<T>(string name) where T : BaseEntity
-        {
-            return new BaseRepository<T>(_database, name);
         }
     }
 }

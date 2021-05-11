@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
-using Tenjin.Serializations;
+using Tenjin.Helpers;
 
 namespace Tenjin.Apis
 {
