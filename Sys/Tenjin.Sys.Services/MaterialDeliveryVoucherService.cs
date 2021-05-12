@@ -19,12 +19,9 @@ namespace Tenjin.Sys.Services
         }
 
 
-        protected override Task InitializeInsertModel(MaterialDeliveryVoucher entity)
+        protected override async Task InitializeInsertModel(MaterialDeliveryVoucher entity)
         {
-            if (entity == null)
-            {
-                return null;
-            }
+
             if (entity.DeliveryType == "other")
             {
                 entity.CustomerCode = string.Empty;
@@ -40,15 +37,12 @@ namespace Tenjin.Sys.Services
                 entity.InvoiceCode = string.Empty;
                 entity.Reason = string.Empty;
             }
-            return base.InitializeInsertModel(entity);
+            await base.InitializeInsertModel(entity);
         }
 
-        protected override Task InitializeReplaceModel(MaterialDeliveryVoucher entity)
+        protected override async Task InitializeReplaceModel(MaterialDeliveryVoucher entity)
         {
-            if (entity == null)
-            {
-                return null;
-            }
+
             if (entity.DeliveryType == "other")
             {
                 entity.CustomerCode = string.Empty;
@@ -64,7 +58,7 @@ namespace Tenjin.Sys.Services
                 entity.InvoiceCode = string.Empty;
                 entity.Reason = string.Empty;
             }
-           return base.InitializeReplaceModel(entity);
+            await base.InitializeReplaceModel(entity);
         }
 
         protected override IAggregateFluent<MaterialDeliveryVoucherView> ConvertToViewAggreagate(IAggregateFluent<MaterialDeliveryVoucher> mappings, IExpressionContext<MaterialDeliveryVoucher, MaterialDeliveryVoucherView> context)

@@ -45,6 +45,10 @@ namespace Tenjin.Sys.Models.Entities
         [BsonProperty(BsonDirection.DESC)]
         public string Gender { get; set; }
 
+        public string InsuranceNumber { get; set; }
+
+        public bool IsLeave { get; set; }
+
         public List<FileResponse> Documents { get; set; }
 
         public override string ValueToSearch => $"{Name?.ToSeoUrl()} {FirstName?.ToSeoUrl()} {DefCode?.ToSeoUrl()} {Phone?.ToSeoUrl()} {Email?.ToSeoUrl()}";

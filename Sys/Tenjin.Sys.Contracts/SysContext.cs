@@ -40,6 +40,7 @@ namespace Tenjin.Sys.Contracts
         public IRepository<Product> ProductRepository => ResolveRepository<Product>();
         public IRepository<ProductBarcode> ProductBarcodeRepository => ResolveRepository<ProductBarcode>();
 
+        public IRepository<MaterialGroupType> MaterialGroupTypeRepository => ResolveRepository<MaterialGroupType>();
 
         public override IRepository<T> ResolveRepository<T>()
         {

@@ -54,6 +54,7 @@ namespace Tenjin.Sys.Apis
             // materials
             services.AddScoped<IMaterialGroupService, MaterialGroupService>();
             services.AddScoped<IMaterialSubgroupService, MaterialSubgroupService>();
+            services.AddScoped<IMaterialGroupTypeService, MaterialGroupTypeService>();
             services.AddScoped<IMaterialService, MaterialService>();
             services.AddScoped<IMaterialBarcodeService, MaterialBarcodeService>();
             services.AddScoped<IMaterialReceivingVoucherService, MaterialReceivingVoucherService>();

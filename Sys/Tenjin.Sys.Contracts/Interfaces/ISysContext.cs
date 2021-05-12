@@ -21,6 +21,7 @@ namespace Tenjin.Sys.Contracts.Interfaces
         // materials
         IRepository<MaterialGroup> MaterialGroupRepository { get; }
         IRepository<MaterialSubgroup> MaterialSubgroupRepository { get; }
+        IRepository<MaterialGroupType> MaterialGroupTypeRepository { get; }
         IRepository<Material> MaterialRepository { get; }
         IRepository<MaterialBarcode> MaterialBarcodeRepository { get; }
         IRepository<Unit> UnitRepository { get; }

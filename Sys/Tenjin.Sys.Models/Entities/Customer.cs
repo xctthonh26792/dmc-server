@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 using Tenjin.Models.Entities;
 
 namespace Tenjin.Sys.Models.Entities
@@ -14,6 +13,9 @@ namespace Tenjin.Sys.Models.Entities
         public string Fax { get; set; }
         public string TaxCode { get; set; }
         public string ContactPerson { get; set; }
+        public string PaymentInfo { get; set; }
+        public string SendDocumentInfo { get; set; }
+
         public string EmployeeCode { get; set; }
     }
 }
