@@ -52,6 +52,8 @@ namespace Tenjin.Sys.Apis
             services.AddScoped<ILogService, LogService>();
 
             // materials
+            services.AddScoped<IWarehouseService, WarehouseService>();
+            services.AddScoped<IWarehouseInventoryService, WarehouseInventoryService>();
             services.AddScoped<IMaterialGroupService, MaterialGroupService>();
             services.AddScoped<IMaterialSubgroupService, MaterialSubgroupService>();
             services.AddScoped<IMaterialGroupTypeService, MaterialGroupTypeService>();
@@ -60,6 +62,8 @@ namespace Tenjin.Sys.Apis
             services.AddScoped<IMaterialReceivingVoucherService, MaterialReceivingVoucherService>();
             services.AddScoped<IMaterialDeliveryVoucherService, MaterialDeliveryVoucherService>();
             services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<IDocumentImportService, DocumentImportService>();
+            services.AddScoped<IDocumentExportService, DocumentExportService>();
 
             // products
             services.AddScoped<IProductGroupService, ProductGroupService>();

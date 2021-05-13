@@ -1,5 +1,8 @@
 ﻿using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Tenjin.Services;
 using Tenjin.Sys.Contracts.Interfaces;
@@ -8,16 +11,16 @@ using Tenjin.Sys.Services.Interfaces;
 
 namespace Tenjin.Sys.Services
 {
-    public class SupplierService : BaseService<Supplier>, ISupplierService
+    public class WarehouseService : BaseService<Warehouse>, IWarehouseService
     {
         private readonly ISysContext _context;
-        private const string TAG = "NCC";
-        public SupplierService(ISysContext context) : base(context.SupplierRepository)
+        private const string TAG = "KHO";
+        public WarehouseService(ISysContext context) : base(context.WarehouseRepository)
         {
             _context = context;
         }
 
-        protected override async Task InitializeInsertModel(Supplier entity)
+        protected override async Task InitializeInsertModel(Warehouse entity)
         {
             await base.InitializeInsertModel(entity);
             entity.Code = await GenerateCode();

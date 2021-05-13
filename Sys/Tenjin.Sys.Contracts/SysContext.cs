@@ -42,6 +42,14 @@ namespace Tenjin.Sys.Contracts
 
         public IRepository<MaterialGroupType> MaterialGroupTypeRepository => ResolveRepository<MaterialGroupType>();
 
+        public IRepository<Warehouse> WarehouseRepository => ResolveRepository<Warehouse>();
+
+        public IRepository<WarehouseInventory> WarehouseInventoryRepository => ResolveRepository<WarehouseInventory>();
+
+        public IRepository<DocumentImport> DocumentImportRepository => ResolveRepository<DocumentImport>();
+
+        public IRepository<DocumentExport> DocumentExportRepository => ResolveRepository<DocumentExport>();
+
         public override IRepository<T> ResolveRepository<T>()
         {
             return new SysRepository<T>(GetDatabase());

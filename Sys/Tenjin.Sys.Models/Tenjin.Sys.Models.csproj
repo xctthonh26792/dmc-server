@@ -8,8 +8,4 @@
     <ProjectReference Include="..\..\Cores\Tenjin.Models\Tenjin.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Enums\" />
-  </ItemGroup>
-
 </Project>

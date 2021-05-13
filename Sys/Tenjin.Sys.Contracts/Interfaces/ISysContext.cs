@@ -19,6 +19,10 @@ namespace Tenjin.Sys.Contracts.Interfaces
         IRepository<JobPosition> JobPositionRepository { get; }
 
         // materials
+        IRepository<Warehouse> WarehouseRepository { get; }
+        IRepository<WarehouseInventory> WarehouseInventoryRepository { get; }
+        IRepository<DocumentImport> DocumentImportRepository { get; }
+        IRepository<DocumentExport> DocumentExportRepository { get; }
         IRepository<MaterialGroup> MaterialGroupRepository { get; }
         IRepository<MaterialSubgroup> MaterialSubgroupRepository { get; }
         IRepository<MaterialGroupType> MaterialGroupTypeRepository { get; }

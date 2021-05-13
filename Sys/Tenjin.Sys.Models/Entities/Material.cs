@@ -21,5 +21,9 @@ namespace Tenjin.Sys.Models.Entities
         public string UnitCode { get; set; }
 
         public bool IsCodeFixed { get; set; }
+
+        public string SerialNumber { get; set; }
+
+        public string Specification { get; set; }
     }
 }
