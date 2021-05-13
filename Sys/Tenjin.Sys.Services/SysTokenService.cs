@@ -40,7 +40,7 @@ namespace Tenjin.Sys.Services
 
         public async Task<ITokenResponse> GetTokenResponse(User user)
         {
-            var employee = await _context.EmployeeRepository.GetSingleByExpression(x => x.Id == user.Code.ToString());
+            var employee = await _context.EmployeeRepository.GetSingleByExpression(x => x.Code == user.Code.ToString());
             if (employee == null || !employee.IsPublished)
             {
                 throw new Exception("Employee has been disabled.");
@@ -48,7 +48,7 @@ namespace Tenjin.Sys.Services
             return new SysTokenResponse
             {
                 AccessToken = await GetAccessToken(user),
-                Code = employee.Id,
+                Code = employee.Code,
                 Name = user.Name ?? employee.Name,
                 IsDefault = user.Permission == int.MaxValue,
                 Permission = user.Permission,

@@ -13,7 +13,7 @@ using Tenjin.Sys.Services.Interfaces;
 namespace Tenjin.Sys.Apis.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class TokenController : TenjinController
     {
         private readonly IUserService _service;

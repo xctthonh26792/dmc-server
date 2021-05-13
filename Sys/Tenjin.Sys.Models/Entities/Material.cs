@@ -12,6 +12,8 @@ namespace Tenjin.Sys.Models.Entities
 
         public string MaterialSubgroupCode { get; set; }
 
+        public string MaterialGroupTypeCode { get; set; }
+
         public string ShortDescription { get; set; }
 
         public string Producer { get; set; }

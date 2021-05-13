@@ -79,7 +79,8 @@ namespace Tenjin.Sys.Services
                 var parts = entity.Name?.Split(' ');
                 entity.FirstName = parts.LastOrDefault()?.ViToEn() ?? string.Empty;
             }
-            entity.DefCode = string.IsNullOrEmpty(entity.DefCode) ? await GenerateCode() : entity.DefCode;
+            entity.Code = await GenerateCode();
+            entity.DefCode = string.IsNullOrEmpty(entity.DefCode) ? entity.Code : entity.DefCode;
             entity.IsPublished = true;
         }
 

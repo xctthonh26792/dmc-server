@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tenjin.Sys.Models", "Sys\Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tenjin.Sys.Services", "Sys\Tenjin.Sys.Services\Tenjin.Sys.Services.csproj", "{F722D49D-CC66-45A8-8DC5-DCE7AB26190C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dmc.Sys.Tools", "Tools\Dmc.Sys.Tools\Dmc.Sys.Tools.csproj", "{AA5052B3-5FB7-4AE7-A067-0E724BCD82AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{F722D49D-CC66-45A8-8DC5-DCE7AB26190C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F722D49D-CC66-45A8-8DC5-DCE7AB26190C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F722D49D-CC66-45A8-8DC5-DCE7AB26190C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA5052B3-5FB7-4AE7-A067-0E724BCD82AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA5052B3-5FB7-4AE7-A067-0E724BCD82AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA5052B3-5FB7-4AE7-A067-0E724BCD82AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA5052B3-5FB7-4AE7-A067-0E724BCD82AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{70355567-4AEA-4098-AC8D-75EAEFFF69E9} = {5E67C7C3-A0E4-4045-B869-30D572704BEC}
 		{B4E938A1-AA8E-4BB4-AC53-191837753784} = {5E67C7C3-A0E4-4045-B869-30D572704BEC}
 		{F722D49D-CC66-45A8-8DC5-DCE7AB26190C} = {5E67C7C3-A0E4-4045-B869-30D572704BEC}
+		{AA5052B3-5FB7-4AE7-A067-0E724BCD82AF} = {8D7E426F-01A3-4316-A7D2-16A204E50F19}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5AE4B39F-B454-4B4A-822D-9E9B21D7323E}

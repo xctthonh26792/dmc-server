@@ -33,6 +33,8 @@ namespace Tenjin.Sys.Services
                 .Unwind("material_group", unwind)
                 .Lookup("material_subgroup", "material_subgroup_code", "code", "material_subgroup")
                 .Unwind("material_subgroup", unwind)
+                .Lookup("material_group_type", "material_group_type_code", "code", "material_group_type")
+                .Unwind("material_group_type", unwind)
                 .Lookup("unit", "unit_code", "code", "unit")
                 .Unwind("unit", unwind)
                 .As<MaterialView>().Match(context.GetPostExpression());
