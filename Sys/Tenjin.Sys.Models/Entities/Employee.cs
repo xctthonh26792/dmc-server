@@ -42,6 +42,10 @@ namespace Tenjin.Sys.Models.Entities
         [BsonProperty(BsonDirection.DESC)]
         public string JobPositionCode { get; set; }
 
+        public string DepartmentCode { get; set; }
+
+        public string JobTitleCode { get; set; }
+
         [BsonProperty(BsonDirection.DESC)]
         public string Gender { get; set; }
 

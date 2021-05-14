@@ -15,7 +15,7 @@ using Tenjin.Sys.Services.Interfaces;
 namespace Tenjin.Sys.Apis.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EmployeeController : BaseController<Employee, EmployeeView>
     {
         private readonly IEmployeeService _service;

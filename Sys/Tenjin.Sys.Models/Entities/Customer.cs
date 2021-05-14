@@ -14,6 +14,7 @@ namespace Tenjin.Sys.Models.Entities
         public string TaxCode { get; set; }
         public string ContactPerson { get; set; }
         public string PaymentInfo { get; set; }
+        public string DeliveryInfo { get; set; }
         public string SendDocumentInfo { get; set; }
 
         public string EmployeeCode { get; set; }
