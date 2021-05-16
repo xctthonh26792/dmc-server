@@ -14,7 +14,7 @@
         public string MaterialGroupCode { get; set; }
         public string MaterialGroupName { get; set; }
 
-        public string MaterialSubgroupCode { get; set; }
+        public string MaterialSubGroupCode { get; set; }
         public string MaterialSubgroupName { get; set; }
 
         public string MaterialGroupTypeCode { get; set; }

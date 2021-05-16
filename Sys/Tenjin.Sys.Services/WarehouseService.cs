@@ -24,6 +24,7 @@ namespace Tenjin.Sys.Services
         {
             await base.InitializeInsertModel(entity);
             entity.Code = await GenerateCode();
+            entity.IsPublished = true;
             entity.DefCode = string.IsNullOrEmpty(entity.DefCode) ? entity.Code : entity.DefCode;
         }
 

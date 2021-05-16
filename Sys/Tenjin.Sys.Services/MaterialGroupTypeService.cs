@@ -23,6 +23,7 @@ namespace Tenjin.Sys.Services
         {
             await base.InitializeInsertModel(entity);
             entity.Code = await GenerateCode();
+            entity.IsPublished = true;
             entity.DefCode = string.IsNullOrEmpty(entity.DefCode) ? entity.Code : entity.DefCode;
         }
 
@@ -51,7 +52,7 @@ namespace Tenjin.Sys.Services
         {
             var unwind = new AggregateUnwindOptions<BsonDocument> { PreserveNullAndEmptyArrays = true };
             return mappings.Lookup("material_group", "material_group_code", "code", "material_group").Unwind("material_group")
-                .Lookup("material_subgroup", "material_subgroup_code", "code", "material_subgroup").Unwind("material_subgroup")
+                .Lookup("material_subgroup", "material_sub_group_code", "code", "material_subgroup").Unwind("material_subgroup")
                 .As<MaterialGroupTypeView>().Match(context.GetPostExpression());
         }
     }

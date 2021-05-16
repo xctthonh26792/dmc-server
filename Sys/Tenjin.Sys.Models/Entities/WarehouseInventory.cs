@@ -8,7 +8,7 @@ namespace Tenjin.Sys.Models.Entities
     {
         public string WarehouseCode { get; set; }
 
-        public long Quantity { get; set; }
+        public long Inventory { get; set; }
 
         public string UnitCode { get; set; }
 
@@ -16,7 +16,7 @@ namespace Tenjin.Sys.Models.Entities
 
         public string MaterialGroupCode { get; set; }
 
-        public string MaterialSubgroupCode { get; set; }
+        public string MaterialSubGroupCode { get; set; }
 
         public string MaterialGroupTypeCode { get; set; }
 

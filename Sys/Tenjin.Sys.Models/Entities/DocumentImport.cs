@@ -15,7 +15,9 @@ namespace Tenjin.Sys.Models.Entities
 
         public DocumentType Type { get; set; }
 
-        public string WarehouseCode { get; set; }
+        public string WarehouseFromCode { get; set; }
+
+        public string WarehouseToCode { get; set; }
 
         public string CustomerCode { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using Tenjin.Apis.Controllers;
 using Tenjin.Sys.Models.Entities;
 using Tenjin.Sys.Models.Views;
@@ -14,6 +15,11 @@ namespace Tenjin.Sys.Apis.Controllers
         public DocumentImportController(IDocumentImportService service) : base(service)
         {
             _service = service;
+        }
+        [HttpGet("resolve")]
+        public async Task<IActionResult> Resolver()
+        {
+            return Ok(await _service.DocumentImportResolve());
         }
     }
 }

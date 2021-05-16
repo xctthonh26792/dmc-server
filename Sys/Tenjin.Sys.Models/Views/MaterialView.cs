@@ -10,14 +10,14 @@ namespace Tenjin.Sys.Models.Views
         {
             get
             {
-                return $"VT{MaterialGroup?.DefCode}-{MaterialSubgroup?.DefCode}-{MaterialGroupType?.DefCode}-{DefCode}";
+                return $"VT{MaterialGroup?.DefCode}-{MaterialSubGroup?.DefCode}-{MaterialGroupType?.DefCode}-{DefCode}";
             }
         }
 
         public MaterialGroup MaterialGroup { get; set; }
         public MaterialGroupType MaterialGroupType { get; set; }
 
-        public MaterialSubgroup MaterialSubgroup { get; set; }
+        public MaterialSubgroup MaterialSubGroup { get; set; }
 
         public Unit Unit { get; set; }
 

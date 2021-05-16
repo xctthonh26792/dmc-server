@@ -6,6 +6,15 @@ namespace Tenjin.Sys.Models.Views
     [BsonIgnoreExtraElements]
     public class WarehouseInventoryView : WarehouseInventory
     {
+
+        public string FullCode
+        {
+            get
+            {
+                return $"VT{MaterialGroup?.DefCode}-{MaterialSubGroup?.DefCode}-{MaterialGroupType?.DefCode}-{Material?.DefCode}";
+            }
+        }
+
         public Warehouse Warehouse { get; set; }
 
 
@@ -15,7 +24,7 @@ namespace Tenjin.Sys.Models.Views
 
         public MaterialGroup MaterialGroup { get; set; }
 
-        public MaterialSubgroup MaterialSubgroup { get; set; }
+        public MaterialSubgroup MaterialSubGroup { get; set; }
 
         public MaterialGroupType MaterialGroupType { get; set; }
     }

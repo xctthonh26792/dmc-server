@@ -16,12 +16,13 @@ namespace Tenjin.Sys.Models.Views
                     return $"{Supplier?.Name}";
                 }
                 else {
-                    return $"{Warehouse?.Name}";
+                    return $"{WarehouseTo?.Name}";
                 }
             }
         }
 
-        public Warehouse Warehouse { get; set; }
+        public Warehouse WarehouseFrom { get; set; }
+        public Warehouse WarehouseTo { get; set; }
 
         public Customer Customer { get; set; }
 

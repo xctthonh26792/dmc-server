@@ -61,8 +61,8 @@ namespace Tenjin.Sys.Services
             return mappings
                 .Lookup("material_group", "material_group_code", "code", "material_group")
                 .Unwind("material_group", unwind)
-                .Lookup("material_subgroup", "material_subgroup_code", "code", "material_subgroup")
-                .Unwind("material_subgroup", unwind)
+                .Lookup("material_subgroup", "material_sub_group_code", "code", "material_sub_group")
+                .Unwind("material_sub_group", unwind)
                 .Lookup("material_group_type", "material_group_type_code", "code", "material_group_type")
                 .Unwind("material_group_type", unwind)
                 .Lookup("unit", "unit_code", "code", "unit")
@@ -244,7 +244,7 @@ namespace Tenjin.Sys.Services
             {
                 return null;
             }
-            return await GetSingleByExpression(x => x.MaterialGroupCode == group.Code && x.MaterialSubgroupCode == subgroup.Code
+            return await GetSingleByExpression(x => x.MaterialGroupCode == group.Code && x.MaterialSubGroupCode == subgroup.Code
             && x.DefCode == materialcode);
         }
     }
